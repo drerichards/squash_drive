@@ -1,78 +1,55 @@
 <template>
-  <div class="container">
-    <div>
-      <Logo />
-      <h1 class="title">
-        squash_drive
-      </h1>
-      <div class="links">
-        <a
-          href="https://nuxtjs.org/"
-          target="_blank"
-          rel="noopener noreferrer"
-          class="button--green"
-        >
-          Documentation
-        </a>
-        <a
-          href="https://github.com/nuxt/nuxt.js"
-          target="_blank"
-          rel="noopener noreferrer"
-          class="button--grey"
-        >
-          GitHub
-        </a>
-      </div>
+  <div class="p-12 h-screen">
+    <div class="h-full">
+      <Header :headerData="headerData" />
+      <Milestones :milestoneData="milestoneData" />
     </div>
   </div>
 </template>
 
 <script>
-export default {}
+import Header from "../components/header/Header";
+import Milestones from "../components/milestones/Milestones";
+export default {
+  components: { Header, Milestones },
+  data: () => ({
+    headerData: {
+      grantAmount: 1000000,
+      fundingSpent: 540000,
+      projectStartDate: "8/15/2018",
+      projectEndDate: "6/30/2021"
+    },
+    milestoneData: [
+      {
+        question: "Establish benchmarks that show STEM mastery",
+        goal: 0,
+        current: 0,
+        beneficiary: "students",
+        benefit: "surveyed"
+      },
+      {
+        question:
+          "During the school year, deliver an average of 90 minutes per week of STEM programming",
+        goal: 90,
+        current: 90,
+        beneficiary: "students",
+        benefit: "instructed for 90 minutes per week"
+      },
+      {
+        question: "Deliver an average of 5 weeks of intensive STEM camps",
+        goal: 96,
+        current: 82,
+        beneficiary: "students",
+        benefit: "attended 5-weeks of STEM camp"
+      },
+      {
+        question: "Enroll 80% of students in external STEM opporunities",
+        goal: 66,
+        current: 20,
+        beneficiary: "students",
+        benefit: "received external STEM opportunities"
+      }
+    ]
+  })
+};
 </script>
-
-<style>
-/* Sample `apply` at-rules with Tailwind CSS
-.container {
-@apply min-h-screen flex justify-center items-center text-center mx-auto;
-}
-*/
-.container {
-  margin: 0 auto;
-  min-height: 100vh;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  text-align: center;
-}
-
-.title {
-  font-family:
-    'Quicksand',
-    'Source Sans Pro',
-    -apple-system,
-    BlinkMacSystemFont,
-    'Segoe UI',
-    Roboto,
-    'Helvetica Neue',
-    Arial,
-    sans-serif;
-  display: block;
-  font-weight: 300;
-  font-size: 100px;
-  color: #35495e;
-  letter-spacing: 1px;
-}
-
-.subtitle {
-  font-weight: 300;
-  font-size: 42px;
-  color: #526488;
-  word-spacing: 5px;
-  padding-bottom: 15px;
-}
-
-.links {
-  padding-top: 15px;
-}
-</style>
