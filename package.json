@@ -1,5 +1,5 @@
 {
-  "name": "squash_drive",
+  "name": "SquashDrive",
   "version": "1.0.0",
   "private": true,
   "scripts": {
@@ -10,8 +10,15 @@
     "serve": "nuxt serve"
   },
   "dependencies": {
+    "@sendgrid/mail": "^7.2.1",
+    "axios": "^0.19.2",
+    "chart.js": "^2.9.3",
+    "chartjs-plugin-datalabels": "^0.7.0",
+    "html2canvas": "^1.0.0-rc.5",
+    "jspdf": "^1.5.3",
     "nuxt": "^2.13.0",
-    "nuxt-svg-loader": "^1.2.0"
+    "nuxt-svg-loader": "^1.2.0",
+    "vue-chartjs": "^3.5.0"
   },
   "devDependencies": {
     "@nuxtjs/tailwindcss": "^2.0.0"
