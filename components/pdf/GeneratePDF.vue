@@ -1,22 +1,10 @@
 <template>
-  <div class="w-full inline-flex justify-end mb-4">
+  <div class="w-full inline-flex justify-center mb-4">
     <button
-      class="bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded-l"
-      @click="generatePDF('email')"
-    >
-      Email Form
-    </button>
-    <button
-      class="bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 border-l border-r border-gray-400"
+      class="bg-green-300 hover:bg-green-400 text-gray-800 font-bold py-2 px-4 border-l border-r border-gray-400"
       @click="generatePDF('print')"
     >
       Print Form
-    </button>
-    <button
-      class="bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded-r"
-      @click="generatePDF('download')"
-    >
-      Download Form
     </button>
   </div>
 </template>

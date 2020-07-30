@@ -22,9 +22,8 @@
       <em class="mt-2 ml-2">{{ i + 1 }}. {{ milestone.question }}</em>
       <div class="flex mt-1 mb-4">
         <div class="w-1/6 border bg-gray-400">
-          <div class="text-center font-bold p-2">
+          <div class="d-flex justify-center p-2">
             <CheckMark
-              class="w-full"
               v-if="
                 milestone.current !== 0 && milestone.current >= milestone.goal
               "

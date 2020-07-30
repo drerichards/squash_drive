@@ -1,19 +1,30 @@
 <template>
   <div class="p-12 h-screen">
     <div class="h-full">
-      <Header :headerData="headerData" />
-      <Milestones :milestoneData="milestoneData" />
-      <Charts
-        :ethnicityChartData="ethnicityChartData"
-        :ethnicityChartOptions="ethnicityChartOptions"
-        :ageChartData="ageChartData"
-        :ageChartOptions="ageChartOptions"
-        :genderChartData="genderChartData"
-        :genderChartOptions="genderChartOptions"
-        :socioChartData="socioChartData"
-        :socioChartOptions="socioChartOptions"
-      />
-      <Impact :impactData="impactData" />
+      <div id="formContent1" class="px-6">
+        <Header :headerData="headerData" />
+        <Milestones :milestoneData="milestoneData" />
+        <Charts
+          :ethnicityChartData="ethnicityChartData"
+          :ethnicityChartOptions="ethnicityChartOptions"
+          :ageChartData="ageChartData"
+          :ageChartOptions="ageChartOptions"
+          :genderChartData="genderChartData"
+          :genderChartOptions="genderChartOptions"
+          :socioChartData="socioChartData"
+          :socioChartOptions="socioChartOptions"
+        />
+        <Impact :impactData="impactData" />
+      </div>
+      <div id="formContent2" class="px-6"></div>
+      <no-ssr>
+        <button
+          class="bg-green-300 hover:bg-green-400 text-gray-800 font-bold py-2 px-4 border-l border-r border-gray-400 mb-12"
+          @click="generatePDF()"
+        >
+          Print Form
+        </button>
+      </no-ssr>
     </div>
   </div>
 </template>
@@ -333,6 +344,53 @@ export default {
         ]
       }
     }
-  })
+  }),
+  methods: {
+    getCanvas: function() {
+      var form = $(".mydiv"),
+        cache_width = form.width(),
+        a4 = [595.28, 841.89];
+      debugger;
+      form.width(a4[0] * 1.33333 - 80).css("max-width", "none");
+      return html2canvas(form, {
+        imageTimeout: 2000,
+        removeContainer: true
+      });
+    },
+    generatePDF: function() {
+      if (process.client) {
+        const JsPDF = require("jspdf");
+        const html2canvas = require("html2canvas");
+        const formContent1 = document.getElementById("formContent1");
+        const formContent2 = document.getElementById("formContent2");
+
+        this.$nextTick(async () => {
+          window.scrollTo(0, 0);
+
+          html2canvas(formContent1).then(canvas1 => {
+            const pdf = new JsPDF("p", "mm", "a4");
+            const ratio = canvas1.width / canvas1.height;
+            const width = pdf.internal.pageSize.getWidth() - 20;
+            const height = width / ratio;
+            pdf.addImage(canvas1, "PNG", 10, 10, width, height, {
+              pagesplit: true
+            });
+            pdf.autoPrint();
+            pdf.output("dataurlnewwindow");
+            // html2canvas(formContent2).then(canvas2 => {
+            //   const pdf = new JsPDF("p", "mm", "a4");
+            //   const ratio = canvas2.width / canvas2.height;
+            //   const width = pdf.internal.pageSize.getWidth() - 20;
+            //   const height = width / ratio;
+            //   pdf.addImage(canvas1, "PNG", 100, 10, width, height);
+            //   pdf.autoPrint();
+            //   pdf.output("dataurlnewwindow");
+            //   // console.log(pdf);
+            // });
+          });
+        });
+      }
+    }
+  }
 };
 </script>

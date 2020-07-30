@@ -15,18 +15,16 @@
         <p class="text-2xl font-bold">FOUNDATION</p>
       </div>
     </div>
-    <GeneratePDF />
     <HeaderGrid :headerData="headerData" />
   </div>
 </template>
 
 <script>
-import GeneratePDF from "../pdf/GeneratePDF";
 import HeaderGrid from "./HeaderGrid";
 
 export default {
   name: "Header",
-  components: { GeneratePDF, HeaderGrid },
+  components: { HeaderGrid },
   props: ["headerData"]
 };
 </script>
