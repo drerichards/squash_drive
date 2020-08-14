@@ -15,16 +15,11 @@
         <p class="text-2xl font-bold">FOUNDATION</p>
       </div>
     </div>
-    <HeaderGrid :headerData="headerData" />
   </div>
 </template>
 
 <script>
-import HeaderGrid from "./HeaderGrid";
-
 export default {
-  name: "Header",
-  components: { HeaderGrid },
-  props: ["headerData"]
+  name: "Header"
 };
 </script>

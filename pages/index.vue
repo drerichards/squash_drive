@@ -1,8 +1,20 @@
 <template>
   <div class="p-12 h-screen">
     <div class="h-full">
-      <div id="formContent1" class="px-6">
-        <Header :headerData="headerData" />
+      <div
+        v-if="showLoading"
+        class="h-screen w-screen fixed z-50 bg-black bg-opacity-75 inset-0 flex justify-center items-center flex-col"
+      >
+        <div>
+          <p class="text-3xl font-extrabold text-white h-full">
+            Generating File
+          </p>
+          <LoadingIcon />
+        </div>
+      </div>
+      <div id="formContent" class="px-6">
+        <Header />
+        <HeaderGrid :headerData="headerData" />
         <Milestones :milestoneData="milestoneData" />
         <Charts
           :ethnicityChartData="ethnicityChartData"
@@ -14,8 +26,7 @@
           :socioChartData="socioChartData"
           :socioChartOptions="socioChartOptions"
         />
-      </div>
-      <div id="formContent2" class="px-6">
+        <Header v-if="showLoading" />
         <Impact :impactData="impactData" />
       </div>
       <no-ssr>
@@ -32,9 +43,11 @@
 
 <script>
 import Header from "../components/header/Header";
+import HeaderGrid from "../components/header/HeaderGrid";
 import Milestones from "../components/milestones/Milestones";
 import Charts from "../components/charts/Charts";
 import Impact from "../components/impact/Impact";
+import LoadingIcon from "../assets/images/loading_icon.svg";
 
 const chartColors = {
   red: "rgb(255, 99, 132)",
@@ -47,7 +60,7 @@ const chartColors = {
 };
 
 export default {
-  components: { Header, Milestones, Charts },
+  components: { Header, HeaderGrid, Milestones, Charts, Impact, LoadingIcon },
   data: () => ({
     headerData: {
       grantAmount: 1000000,
@@ -55,6 +68,7 @@ export default {
       projectStartDate: "8/15/2018",
       projectEndDate: "6/30/2021"
     },
+    showLoading: false,
     milestoneData: [
       {
         question: "Establish benchmarks that show STEM mastery",
@@ -348,38 +362,67 @@ export default {
   }),
   methods: {
     generatePDF: function() {
+      this.showLoading = true;
       if (process.client) {
         const JsPDF = require("jspdf");
         const html2canvas = require("html2canvas");
-        const formContent1 = document.getElementById("formContent1");
-        const formContent2 = document.getElementById("formContent2");
-
+        const formContent = document.getElementById("formContent");
         this.$nextTick(() => {
           window.scrollTo(0, 0);
-          const pdf = new JsPDF("p", "mm", "a4");
 
-          html2canvas(formContent1).then(canvas1 => {
-            const ratio = canvas1.width / canvas1.height;
-            const width = pdf.internal.pageSize.getWidth() - 20;
-            const height = width / ratio;
-            pdf.addImage(canvas1, "PNG", 10, 10, width, height);
-            pdf.autoPrint();
-            pdf.output("dataurlnewwindow");
+          html2canvas(formContent, { background: "white" }).then(canvas1 => {
+            const pdf = new JsPDF("p", "pt", "a4");
+
+            for (let i = 0; i <= formContent.clientHeight / 1980; i++) {
+              const srcImg = canvas1;
+              const sX = 0; // origin
+              const sY = 2800 * i; // start this many units down for every new page
+              const sWidth = 2700;
+              const sHeight = 2800;
+              const dX = 0;
+              const dY = 0;
+              const dWidth = 2020;
+              const dHeight = 2200;
+
+              const onePageCanvas = document.createElement("canvas");
+              onePageCanvas.setAttribute("width", 2800);
+              onePageCanvas.setAttribute("height", 2800);
+              const ctx = onePageCanvas.getContext("2d");
+
+              ctx.drawImage(
+                srcImg,
+                sX,
+                sY,
+                sWidth,
+                sHeight,
+                dX,
+                dY,
+                dWidth,
+                dHeight
+              );
+
+              const canvasDataURL = onePageCanvas.toDataURL("image/png", 1.0);
+
+              const width = onePageCanvas.width;
+              const height = onePageCanvas.clientHeight;
+
+              // add another page if > 1
+              if (i > 0) {
+                pdf.addPage(612, 791); //8.5" x 11" in pts (in*72)
+              }
+              pdf.setPage(i + 1);
+              pdf.addImage(
+                canvasDataURL,
+                "PNG",
+                20, // padding
+                20, // padding
+                width * 0.28, // zoom
+                height * 0.28
+              );
+            }
+            pdf.save("SquashDrive_semi-annual_report.pdf");
+            this.showLoading = false;
           });
-          this.$nextTick(() => {
-            html2canvas(formContent2).then(canvas2 => {
-              const pdf = new JsPDF("p", "mm", "a4");
-              const ratio = canvas2.width / canvas2.height;
-              const width = pdf.internal.pageSize.getWidth() - 20;
-              const height = width / ratio;
-              pdf.addImage(canvas1, "PNG", 100, 10, width, height);
-              // pdf.save();
-              // console.log(pdf);
-            });
-          });
-          // this.$nextTick(() => {
-          //   pdf.save();
-          // });
         });
       }
     }

@@ -5,6 +5,8 @@
 ```bash
 # install dependencies
 $ yarn install
+$ If > Please choose a version of "file-saver" from this list:
+$  - Choose: 2.0.2
 
 # serve with hot reload at localhost:3000
 $ yarn dev
