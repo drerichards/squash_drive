@@ -6,7 +6,7 @@
         class="h-screen w-screen fixed z-50 bg-black bg-opacity-75 inset-0 flex justify-center items-center flex-col"
       >
         <div>
-          <p class="text-3xl font-extrabold text-white h-full">
+          <p class="text-3xl font-extrabold text-white mb-2">
             Generating File
           </p>
           <LoadingIcon />
@@ -149,7 +149,7 @@ export default {
             chartColors.blue,
             chartColors.purple
           ],
-          data: [3, 44, 1, 25, 10]
+          data: [3000, 4400, 1000, 2500, 1000]
         }
       ]
     },
@@ -159,7 +159,7 @@ export default {
         {
           label: "Age",
           backgroundColor: [chartColors.green],
-          data: [82]
+          data: [8200000]
         }
       ]
     },
@@ -169,7 +169,7 @@ export default {
         {
           label: "Gender Identity",
           backgroundColor: [chartColors.blue, chartColors.green],
-          data: [51, 31]
+          data: [5100, 3100]
         }
       ]
     },
@@ -179,7 +179,7 @@ export default {
         {
           label: "Socioeconomic",
           backgroundColor: [chartColors.blue, chartColors.blue],
-          data: [33, 66]
+          data: [3300, 6600]
         }
       ]
     },
@@ -187,9 +187,9 @@ export default {
       responsive: false,
       layout: {
         padding: {
-          top: 50,
-          bottom: 50,
-          left: 55,
+          top: 40,
+          bottom: 30,
+          left: 35,
           right: 10
         }
       },
@@ -202,25 +202,25 @@ export default {
       plugins: {
         datalabels: {
           display: true,
-          anchor: "center",
+          anchor: "end",
           clamp: true,
           align: "end",
           offset: function(context) {
             if (context.dataIndex === 1) {
               return -40;
             }
-            return 20;
+            return -40;
           },
           formatter: function(value, context) {
             if (value === 1) {
               return `
               ${context.chart.data.labels[context.dataIndex]}
-              ${value} person`;
+              ${value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")} person`;
             }
 
             return `
               ${context.chart.data.labels[context.dataIndex]}
-              ${value} people`;
+              ${value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")} people`;
           }
         }
       }
@@ -252,12 +252,12 @@ export default {
             if (value === 1) {
               return `
               ${context.chart.data.labels[context.dataIndex]}
-              ${value} person`;
+              ${value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")} person`;
             }
 
             return `
               ${context.chart.data.labels[context.dataIndex]}
-              ${value} people`;
+              ${value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")} people`;
           }
         }
       }
@@ -294,11 +294,11 @@ export default {
             if (value === 1) {
               return `
               ${context.chart.data.labels[context.dataIndex]}
-              ${value} person`;
+              ${value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")} person`;
             }
             return `
               ${context.chart.data.labels[context.dataIndex]}
-              ${value} people`;
+              ${value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")} people`;
           }
         }
       }
@@ -326,15 +326,19 @@ export default {
           anchor: "end",
           clamp: true,
           align: "end",
-          offset: -65,
+          offset: -80,
           font: {
             weight: "bold"
           },
           formatter: function(value, context) {
             if (value === 1) {
-              return `${value} person`;
+              return `${value
+                .toString()
+                .replace(/\B(?=(\d{3})+(?!\d))/g, ",")} person`;
             }
-            return `${value} people`;
+            return `${value
+              .toString()
+              .replace(/\B(?=(\d{3})+(?!\d))/g, ",")} people`;
           }
         }
       },
@@ -343,7 +347,13 @@ export default {
         xAxes: [
           {
             ticks: {
-              beginAtZero: true
+              beginAtZero: true,
+              userCallback: function(value, index, values) {
+                value = value.toString();
+                value = value.split(/(?=(?:...)*$)/);
+                value = value.join(",");
+                return value;
+              }
             }
           }
         ],
@@ -363,66 +373,67 @@ export default {
   methods: {
     generatePDF: function() {
       this.showLoading = true;
+      const formContent = document.getElementById("formContent");
       if (process.client) {
         const JsPDF = require("jspdf");
         const html2canvas = require("html2canvas");
-        const formContent = document.getElementById("formContent");
         this.$nextTick(() => {
-          window.scrollTo(0, 0);
+          if (formContent) {
+            window.scrollTo(0, 0);
 
-          html2canvas(formContent, { background: "white" }).then(canvas1 => {
-            const pdf = new JsPDF("p", "pt", "a4");
+            html2canvas(formContent).then(canvas1 => {
+              const pdf = new JsPDF("p", "pt", "a4");
 
-            for (let i = 0; i <= formContent.clientHeight / 1980; i++) {
-              const srcImg = canvas1;
-              const sX = 0; // origin
-              const sY = 2800 * i; // start this many units down for every new page
-              const sWidth = 2700;
-              const sHeight = 2800;
-              const dX = 0;
-              const dY = 0;
-              const dWidth = 2020;
-              const dHeight = 2200;
+              for (let i = 0; i <= formContent.clientHeight / 1980; i++) {
+                const srcImg = canvas1;
+                const sX = 0; // origin
+                const sY = 2800 * i; // start this many units down for every new page
+                const sWidth = 2700;
+                const sHeight = 2800;
+                const dX = 0;
+                const dY = 0;
+                const dWidth = 2020;
+                const dHeight = 2200;
 
-              const onePageCanvas = document.createElement("canvas");
-              onePageCanvas.setAttribute("width", 2800);
-              onePageCanvas.setAttribute("height", 2800);
-              const ctx = onePageCanvas.getContext("2d");
+                const onePageCanvas = document.createElement("canvas");
+                onePageCanvas.setAttribute("width", 2800);
+                onePageCanvas.setAttribute("height", 2800);
+                const ctx = onePageCanvas.getContext("2d");
 
-              ctx.drawImage(
-                srcImg,
-                sX,
-                sY,
-                sWidth,
-                sHeight,
-                dX,
-                dY,
-                dWidth,
-                dHeight
-              );
+                ctx.drawImage(
+                  srcImg,
+                  sX,
+                  sY,
+                  sWidth,
+                  sHeight,
+                  dX,
+                  dY,
+                  dWidth,
+                  dHeight
+                );
 
-              const canvasDataURL = onePageCanvas.toDataURL("image/png", 1.0);
+                const canvasDataURL = onePageCanvas.toDataURL("image/png", 1.0);
+                const width = onePageCanvas.width;
+                const height = onePageCanvas.clientHeight;
 
-              const width = onePageCanvas.width;
-              const height = onePageCanvas.clientHeight;
-
-              // add another page if > 1
-              if (i > 0) {
-                pdf.addPage(612, 791); //8.5" x 11" in pts (in*72)
+                // add another page if > 1
+                if (i > 0) {
+                  pdf.addPage(595, 791); //8.5" x 11" in pts (in*72)
+                }
+                pdf.setPage(i + 1);
+                pdf.addImage(
+                  canvasDataURL,
+                  "PNG",
+                  20, // padding
+                  20, // padding
+                  width * 0.28, // zoom
+                  height * 0.28
+                );
               }
-              pdf.setPage(i + 1);
-              pdf.addImage(
-                canvasDataURL,
-                "PNG",
-                20, // padding
-                20, // padding
-                width * 0.28, // zoom
-                height * 0.28
-              );
-            }
-            pdf.save("SquashDrive_semi-annual_report.pdf");
-            this.showLoading = false;
-          });
+              pdf.save("SquashDrive_semiannual_report.pdf");
+              this.showLoading = false;
+            });
+          }
         });
       }
     }
